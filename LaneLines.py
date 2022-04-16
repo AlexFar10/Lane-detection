@@ -7,22 +7,7 @@ def hist(img):
     return np.sum(bottom_half, axis=0)
 
 class LaneLines:
-    """ Class containing information about detected lane lines.
-
-    Attributes:
-        left_fit (np.array): Coefficients of a polynomial that fit left lane line
-        right_fit (np.array): Coefficients of a polynomial that fit right lane line
-        parameters (dict): Dictionary containing all parameters needed for the pipeline
-        debug (boolean): Flag for debug/normal mode
-    """
     def __init__(self):
-        """Init Lanelines.
-
-        Parameters:
-            left_fit (np.array): Coefficients of polynomial that fit left lane
-            right_fit (np.array): Coefficients of polynomial that fit right lane
-            binary (np.array): binary image
-        """
         self.left_fit = None
         self.right_fit = None
         self.binary = None
@@ -47,29 +32,10 @@ class LaneLines:
         self.minpix = 50
 
     def forward(self, img):
-        """Take a image and detect lane lines.
-
-        Parameters:
-            img (np.array): An binary image containing relevant pixels
-
-        Returns:
-            Image (np.array): An RGB image containing lane lines pixels and other details
-        """
         self.extract_features(img)
         return self.fit_poly(img)
 
     def pixels_in_window(self, center, margin, height):
-        """ Return all pixel that in a specific window
-
-        Parameters:
-            center (tuple): coordinate of the center of the window
-            margin (int): half width of the window
-            height (int): height of the window
-
-        Returns:
-            pixelx (np.array): x coordinates of pixels that lie inside the window
-            pixely (np.array): y coordinates of pixels that lie inside the window
-        """
         topleft = (center[0]-margin, center[1]-height//2)
         bottomright = (center[0]+margin, center[1]+height//2)
 
@@ -78,11 +44,6 @@ class LaneLines:
         return self.nonzerox[condx&condy], self.nonzeroy[condx&condy]
 
     def extract_features(self, img):
-        """ Extract features from a binary image
-
-        Parameters:
-            img (np.array): A binary image
-        """
         self.img = img
         # Height of of windows - based on nwindows and image shape
         self.window_height = np.int(img.shape[0]//self.nwindows)
@@ -93,18 +54,6 @@ class LaneLines:
         self.nonzeroy = np.array(self.nonzero[0])
 
     def find_lane_pixels(self, img):
-        """Find lane pixels from a binary warped image.
-
-        Parameters:
-            img (np.array): A binary warped image
-
-        Returns:
-            leftx (np.array): x coordinates of left lane pixels
-            lefty (np.array): y coordinates of left lane pixels
-            rightx (np.array): x coordinates of right lane pixels
-            righty (np.array): y coordinates of right lane pixels
-            out_img (np.array): A RGB image that use to display result later on.
-        """
         assert(len(img.shape) == 2)
 
         # Create an output image to draw on and visualize the result
@@ -146,15 +95,6 @@ class LaneLines:
         return leftx, lefty, rightx, righty, out_img
 
     def fit_poly(self, img):
-        """Find the lane line from an image and draw it.
-
-        Parameters:
-            img (np.array): a binary warped image
-
-        Returns:
-            out_img (np.array): a RGB image that have lane line drawn on that.
-        """
-
         leftx, lefty, rightx, righty, out_img = self.find_lane_pixels(img)
 
         if len(lefty) > 1500:
@@ -220,16 +160,16 @@ class LaneLines:
         out_img[:H, :W] = widget
 
         direction = max(set(self.dir), key = self.dir.count)
-        msg = "Keep Straight Ahead"
-        curvature_msg = "Curvature = {:.0f} m".format(min(lR, rR))
+        msg = "Mergeti inainte"
+        curvature_msg = "Curba = {:.0f} m".format(min(lR, rR))
         if direction == 'L':
             y, x = self.left_curve_img[:,:,3].nonzero()
             out_img[y, x-100+W//2] = self.left_curve_img[y, x, :3]
-            msg = "Left Curve Ahead"
+            msg = "Viraj la stanga"
         if direction == 'R':
             y, x = self.right_curve_img[:,:,3].nonzero()
             out_img[y, x-100+W//2] = self.right_curve_img[y, x, :3]
-            msg = "Right Curve Ahead"
+            msg = "Viraj la dreapta"
         if direction == 'F':
             y, x = self.keep_straight_img[:,:,3].nonzero()
             out_img[y, x-100+W//2] = self.keep_straight_img[y, x, :3]
@@ -240,7 +180,7 @@ class LaneLines:
 
         cv2.putText(
             out_img,
-            "Good Lane Keeping",
+            "Mentinere de banda corecta",
             org=(10, 400),
             fontFace=cv2.FONT_HERSHEY_SIMPLEX,
             fontScale=1.2,
@@ -249,7 +189,7 @@ class LaneLines:
 
         cv2.putText(
             out_img,
-            "Vehicle is {:.2f} m away from center".format(pos),
+            "Masina este la {:.2f} m departare de centrul benzii".format(pos),
             org=(10, 450),
             fontFace=cv2.FONT_HERSHEY_SIMPLEX,
             fontScale=0.66,

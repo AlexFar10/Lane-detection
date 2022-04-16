@@ -13,21 +13,10 @@ def threshold_abs(img, lo, hi):
     return np.uint8((img >= lo) & (img <= hi)) * 255
 
 class Thresholding:
-    """ This class is for extracting relevant pixels in an image.
-    """
     def __init__(self):
-        """ Init Thresholding."""
         pass
 
     def forward(self, img):
-        """ Take an image and extract all relavant pixels.
-
-        Parameters:
-            img (np.array): Input image
-
-        Returns:
-            binary (np.array): A binary image represent all positions of relavant pixels.
-        """
         hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
         hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
         h_channel = hls[:,:,0]
